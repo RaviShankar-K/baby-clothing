@@ -32,7 +32,10 @@ export default async function TryOnPage({ searchParams }: Props) {
         <h2 className="font-bold">How we handle your photos 🔒</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-ink-soft">
           <li>Your uploaded photo is used only to create your preview and is not displayed publicly.</li>
-          <li>In this demo, your photo never leaves your device — the preview is simulated in your browser.</li>
+          <li>
+            Your photo never leaves your device — face detection and the preview are rendered
+            entirely in your browser, with no uploads to any server.
+          </li>
           <li>We never use your baby&apos;s photos for marketing, training, or anything else without your explicit permission.</li>
           <li>
             Read the full details on our{" "}

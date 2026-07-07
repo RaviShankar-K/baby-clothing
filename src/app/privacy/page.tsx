@@ -27,8 +27,8 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl font-bold">How photo uploads work today</h2>
           <p className="mt-3 leading-relaxed text-ink-soft">
-            The current &ldquo;See Your Baby Wearing This&rdquo; feature runs in demo mode: your
-            photo is processed entirely in your browser to show a simulated preview, and is not
+            The &ldquo;See Your Baby Wearing This&rdquo; preview runs entirely on your device: face
+            detection and the preview image are computed in your browser, and your photo is not
             uploaded to our servers at all. When you close the page, the photo is gone.
           </p>
         </section>

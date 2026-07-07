@@ -1,39 +1,64 @@
 /**
  * Baby photo try-on service.
  *
- * This module is the single plug point for a real AI image-generation API.
- * Today it simulates rendering with a delay and returns a placeholder result.
+ * Default mode is fully LOCAL: the photo is analyzed and composited on the
+ * user's device (see src/lib/faceComposite.ts) — it never leaves the browser.
  *
- * To connect a real provider later:
+ * A remote AI plug point is kept for a future photorealistic upgrade:
  *   1. Implement the provider call inside src/app/api/try-on/route.ts
  *      (server-side, so API keys stay out of the browser — read them from
  *      process.env, never hardcode).
- *   2. Return { previewUrl } pointing at the generated image.
- *   3. Nothing in the UI needs to change — BabyTryOnUploader already calls
- *      generateTryOnPreview() and renders whatever comes back.
+ *   2. Return { status: "generated", previewUrl } pointing at the image.
+ *   3. Swap generateRemoteTryOnPreview into generateTryOnPreview below (or
+ *      offer it as an "HD preview" option) — the UI needs no changes, it
+ *      renders whatever TryOnResult comes back.
  *
- * Privacy: uploaded photos are only used to create the preview. In this
- * prototype the photo never leaves the browser (the simulated API receives
- * only the product handle). When wiring a real API, ensure uploads are
- * processed transiently and never stored or displayed publicly.
+ * Privacy: uploaded photos are only used to create the preview. Local mode
+ * guarantees this technically — nothing is transmitted. A future remote mode
+ * must process uploads transiently and never store or display them publicly.
  */
 
+import type { ProductMockupSpec } from "@/data/products";
+import { compositeTryOn } from "./faceComposite";
+
 export interface TryOnRequest {
-  /** Data URL of the uploaded baby photo (stays client-side in the demo) */
+  /** Data URL of the uploaded baby photo (never leaves the browser in local mode) */
   photoDataUrl: string;
   productHandle: string;
   productTitle: string;
+  productMockup: ProductMockupSpec;
 }
 
 export interface TryOnResult {
-  status: "simulated" | "generated";
-  /** URL of the generated preview image; null while in simulated mode */
+  status: "local" | "simulated" | "generated";
+  /** URL (or data URL) of the generated preview image */
   previewUrl: string | null;
   message: string;
 }
 
 export async function generateTryOnPreview(request: TryOnRequest): Promise<TryOnResult> {
-  // The photo itself is intentionally NOT sent to the server in demo mode.
+  try {
+    const { dataUrl, faceDetected } = await compositeTryOn(request.photoDataUrl, request.productMockup);
+    return {
+      status: "local",
+      previewUrl: dataUrl,
+      message: faceDetected
+        ? "Rendered instantly on your device — your photo never left your browser."
+        : "We couldn't spot a face clearly, so we centered your photo. A bright, front-facing photo works best. Rendered on your device — nothing was uploaded.",
+    };
+  } catch {
+    // Very old browser (no canvas/WASM)? Fall back to the simulated remote flow.
+    return generateRemoteTryOnPreview(request);
+  }
+}
+
+/**
+ * Remote plug point for a future AI image-generation provider.
+ * Currently the API route simulates rendering and returns no image.
+ * NOTE: in a real integration, send the photo itself (multipart or a
+ * signed-upload URL) — the demo intentionally sends only product info.
+ */
+export async function generateRemoteTryOnPreview(request: TryOnRequest): Promise<TryOnResult> {
   const res = await fetch("/api/try-on", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

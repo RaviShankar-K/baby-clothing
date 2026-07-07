@@ -58,6 +58,7 @@ export default function BabyTryOnUploader({ initialProductHandle }: { initialPro
         photoDataUrl: photo,
         productHandle: product.handle,
         productTitle: product.title,
+        productMockup: product.mockup,
       });
       setResult(res);
       setStep("done");
@@ -174,7 +175,18 @@ export default function BabyTryOnUploader({ initialProductHandle }: { initialPro
           <div className="mt-4">
             <div className="relative overflow-hidden rounded-2xl bg-white/70">
               {result.previewUrl ? (
-                <img src={result.previewUrl} alt={`Generated preview of your baby wearing ${product.title}`} className="aspect-square w-full object-cover" />
+                <>
+                  <img
+                    src={result.previewUrl}
+                    alt={`Generated preview of your baby wearing ${product.title}`}
+                    className="w-full object-contain"
+                  />
+                  {result.status === "local" && (
+                    <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-ink shadow-sm">
+                      🔒 Rendered on your device
+                    </span>
+                  )}
+                </>
               ) : (
                 <>
                   <ProductMockup mockup={product.mockup} title={product.title} className="w-full" />
