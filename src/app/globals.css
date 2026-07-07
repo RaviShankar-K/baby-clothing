@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  --cream: #fffaf5;
+  --ink: #4a3b36;
+  --ink-soft: #8a746c;
+  --blush: #fbe9e7;
+  --coral: #e58a7e;
+  --coral-deep: #c96f63;
+  --mint: #e3f2ec;
+  --sky: #e3edf9;
+  --butter: #fdf3e3;
+  --lilac: #efe9f8;
+}
+
+@theme inline {
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-blush: var(--blush);
+  --color-coral: var(--coral);
+  --color-coral-deep: var(--coral-deep);
+  --color-mint: var(--mint);
+  --color-sky: var(--sky);
+  --color-butter: var(--butter);
+  --color-lilac: var(--lilac);
+  --font-display: var(--font-quicksand), ui-rounded, system-ui, sans-serif;
+  --font-body: var(--font-nunito), system-ui, sans-serif;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: var(--blush);
+}
