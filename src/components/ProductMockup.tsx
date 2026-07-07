@@ -11,10 +11,16 @@ import type { ProductMockupSpec } from "@/data/products";
 export default function ProductMockup({
   mockup,
   title,
+  personalizedName,
+  personalizedSub,
   className = "",
 }: {
   mockup: ProductMockupSpec;
   title: string;
+  /** Baby's name, drawn live on the garment (local, no API) */
+  personalizedName?: string;
+  /** Secondary personalization line, e.g. age or date */
+  personalizedSub?: string;
   className?: string;
 }) {
   // Wrap the printed text into short lines so long prints stay readable
@@ -85,6 +91,33 @@ export default function ProductMockup({
           {line}
         </text>
       ))}
+      {personalizedName && (
+        <text
+          x="200"
+          y={280 + lines.length * 20}
+          textAnchor="middle"
+          fontSize="15"
+          fontWeight="700"
+          fontStyle="italic"
+          fill="#4a3b36"
+          fontFamily="var(--font-quicksand), ui-rounded, sans-serif"
+        >
+          {personalizedName}
+        </text>
+      )}
+      {personalizedSub && (
+        <text
+          x="200"
+          y={(personalizedName ? 296 : 282) + lines.length * 20}
+          textAnchor="middle"
+          fontSize="10"
+          fontWeight="600"
+          fill="#8a746c"
+          fontFamily="var(--font-nunito), sans-serif"
+        >
+          {personalizedSub}
+        </text>
+      )}
 
       {/* head */}
       <circle cx="200" cy="130" r="74" fill="#F6DCC8" />

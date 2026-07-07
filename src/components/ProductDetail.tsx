@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { formatPrice, getCollection, type Product } from "@/data/products";
 import ProductImage from "./ProductImage";
+import ProductMockup from "./ProductMockup";
 import PersonalizationForm, {
   emptyPersonalization,
   type PersonalizationValues,
@@ -56,7 +57,26 @@ export default function ProductDetail({ product }: { product: Product }) {
             className="overflow-hidden rounded-3xl shadow-sm ring-1 ring-ink/5"
             style={{ backgroundColor: product.mockup.bg }}
           >
-            <ProductImage product={product} imageIndex={imageIndex} className="aspect-square h-auto w-full" />
+            {product.images.length > 0 ? (
+              <ProductImage product={product} imageIndex={imageIndex} className="aspect-square h-auto w-full" />
+            ) : (
+              <ProductMockup
+                // Custom-name designs print the name itself; others add it below the design
+                mockup={
+                  product.collection === "custom-name" && personalization.babyName.trim()
+                    ? { ...product.mockup, print: personalization.babyName.trim().toUpperCase() }
+                    : product.mockup
+                }
+                title={product.title}
+                personalizedName={
+                  product.collection === "custom-name" ? undefined : personalization.babyName.trim() || undefined
+                }
+                personalizedSub={
+                  [personalization.ageMonth.trim(), personalization.date].filter(Boolean).join(" · ") || undefined
+                }
+                className="aspect-square h-auto w-full"
+              />
+            )}
           </div>
           <div className="mt-3 flex gap-2" role="group" aria-label="Product views">
             {Array.from({ length: viewCount }).map((_, i) => (
@@ -76,7 +96,7 @@ export default function ProductDetail({ product }: { product: Product }) {
             ))}
           </div>
           <p className="mt-2 text-xs text-ink-soft">
-            Mockup shown — your personalized print will match what you enter below.
+            Mockup shown — type a name below and watch it appear on the outfit. ✨
           </p>
         </div>
 
