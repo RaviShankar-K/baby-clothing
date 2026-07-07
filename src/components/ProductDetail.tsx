@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { formatPrice, getCollection, type Product } from "@/data/products";
-import ProductImage from "./ProductImage";
+import { formatPrice, getCollection, getModelPhoto, type Product } from "@/data/products";
+import ProductImage, { getProductViews } from "./ProductImage";
 import ProductMockup from "./ProductMockup";
+import BabyPhotoMockup from "./BabyPhotoMockup";
 import PersonalizationForm, {
   emptyPersonalization,
   type PersonalizationValues,
@@ -20,9 +21,18 @@ export default function ProductDetail({ product }: { product: Product }) {
   const [added, setAdded] = useState(false);
   const [sizeError, setSizeError] = useState(false);
 
-  // The generated mockup gets 3 pseudo-views; real images use their own count.
-  const viewCount = product.images.length > 0 ? product.images.length : 3;
-  const viewLabels = ["Front view", "Close-up of print", "On soft background"];
+  const views = getProductViews(product);
+  const activeView = views[Math.min(imageIndex, views.length - 1)];
+
+  // Live personalization drawn onto the mockups as the parent types
+  const typedName = personalization.babyName.trim();
+  const typedSub =
+    [personalization.ageMonth.trim(), personalization.date].filter(Boolean).join(" · ") || undefined;
+  const isCustomName = product.collection === "custom-name";
+  // Custom-name designs print the name itself; others add it below the design
+  const effectiveMockup =
+    isCustomName && typedName ? { ...product.mockup, print: typedName.toUpperCase() } : product.mockup;
+  const nameLine = isCustomName ? undefined : typedName || undefined;
 
   function handleAddToCart() {
     if (!size) {
@@ -57,34 +67,34 @@ export default function ProductDetail({ product }: { product: Product }) {
             className="overflow-hidden rounded-3xl shadow-sm ring-1 ring-ink/5"
             style={{ backgroundColor: product.mockup.bg }}
           >
-            {product.images.length > 0 ? (
+            {activeView.type === "photo" ? (
+              <BabyPhotoMockup
+                product={product}
+                photo={getModelPhoto(product)}
+                mockup={effectiveMockup}
+                personalizedName={nameLine}
+                personalizedSub={typedSub}
+                className="aspect-square h-auto w-full"
+              />
+            ) : activeView.type === "image" ? (
               <ProductImage product={product} imageIndex={imageIndex} className="aspect-square h-auto w-full" />
             ) : (
               <ProductMockup
-                // Custom-name designs print the name itself; others add it below the design
-                mockup={
-                  product.collection === "custom-name" && personalization.babyName.trim()
-                    ? { ...product.mockup, print: personalization.babyName.trim().toUpperCase() }
-                    : product.mockup
-                }
+                mockup={effectiveMockup}
                 title={product.title}
-                personalizedName={
-                  product.collection === "custom-name" ? undefined : personalization.babyName.trim() || undefined
-                }
-                personalizedSub={
-                  [personalization.ageMonth.trim(), personalization.date].filter(Boolean).join(" · ") || undefined
-                }
+                personalizedName={nameLine}
+                personalizedSub={typedSub}
                 className="aspect-square h-auto w-full"
               />
             )}
           </div>
           <div className="mt-3 flex gap-2" role="group" aria-label="Product views">
-            {Array.from({ length: viewCount }).map((_, i) => (
+            {views.map((view, i) => (
               <button
-                key={i}
+                key={view.label}
                 type="button"
                 onClick={() => setImageIndex(i)}
-                aria-label={viewLabels[i] ?? `View ${i + 1}`}
+                aria-label={view.label}
                 aria-pressed={imageIndex === i}
                 className={`h-16 w-16 overflow-hidden rounded-xl ring-2 transition-all ${
                   imageIndex === i ? "ring-coral" : "ring-transparent hover:ring-coral/40"
@@ -96,7 +106,8 @@ export default function ProductDetail({ product }: { product: Product }) {
             ))}
           </div>
           <p className="mt-2 text-xs text-ink-soft">
-            Mockup shown — type a name below and watch it appear on the outfit. ✨
+            Mockup shown — type a name below and watch it appear on the outfit. ✨{" "}
+            Model photo: {getModelPhoto(product).credit}.
           </p>
         </div>
 

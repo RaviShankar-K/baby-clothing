@@ -43,10 +43,23 @@ src/
     Testimonials, Footer, ProductImage, ProductMockup
 ```
 
+## Product visuals: how the mockups work
+
+Each product has an ordered list of views (see `getProductViews` in
+`src/components/ProductImage.tsx`):
+
+1. **Baby model photo** — a licensed stock photo (`public/babies/`, credits in
+   `public/babies/CREDITS.md`) with the design composited onto the chest. Placement is
+   configured per photo in `modelPhotos` (`src/data/products.ts`); products pick a model
+   via `modelPhotoId`. This is the primary image on cards and product pages.
+2. **Design artwork** — any real image URLs in the product's `images` array (e.g. the
+   "Alexa, Order Cake" illustration in `public/products/`).
+3. **Generated illustration** — the cute SVG baby (`ProductMockup`), which also carries
+   the live personalization preview.
+
 ## How to replace mock product images
 
-Products currently render a generated SVG illustration (`ProductMockup`) of a baby wearing
-the outfit. To use real photos or AI-generated mockups:
+To use real photos or AI-generated mockups:
 
 1. Open [`src/data/products.ts`](src/data/products.ts).
 2. Add URLs to the product's `images` array:

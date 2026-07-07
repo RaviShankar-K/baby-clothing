@@ -54,10 +54,68 @@ export interface Product {
   mockup: ProductMockupSpec;
   /** Real image URLs — replaces the generated mockup when present */
   images: string[];
+  /** Stock photo of a real baby model the design gets overlaid on */
+  modelPhotoId: ModelPhotoId;
   bestseller?: boolean;
   fabric: string;
   care: string[];
   deliveryEstimate: string;
+}
+
+/** Where the design print lands on a model photo, in % of the square image */
+export interface PrintPlacement {
+  left: number;
+  top: number;
+  width: number;
+  rotate: number;
+}
+
+export interface ModelPhoto {
+  id: string;
+  src: string;
+  alt: string;
+  credit: string;
+  creditUrl: string;
+  print: PrintPlacement;
+}
+
+export type ModelPhotoId = "sitting" | "lights" | "newborn";
+
+/**
+ * Licensed stock photos of baby models (Pexels license / public domain —
+ * see public/babies/CREDITS.md). Product designs are overlaid on the chest
+ * via the PrintPlacement config. Add entries here to grow the model pool,
+ * then point products at them via `modelPhotoId`.
+ */
+export const modelPhotos: Record<ModelPhotoId, ModelPhoto> = {
+  sitting: {
+    id: "sitting",
+    src: "/babies/model-sitting.jpg",
+    alt: "Smiling baby model sitting in a plain white shirt",
+    credit: "Bave Pictures via Pexels",
+    creditUrl: "https://www.pexels.com/photo/17152783/",
+    print: { left: 29, top: 55, width: 27, rotate: -3 },
+  },
+  lights: {
+    id: "lights",
+    src: "/babies/model-lights.jpg",
+    alt: "Baby model in a white onesie playing with fairy lights",
+    credit: "Helena Lopes via Pexels",
+    creditUrl: "https://www.pexels.com/photo/27086930/",
+    print: { left: 33, top: 46, width: 25, rotate: -6 },
+  },
+  newborn: {
+    id: "newborn",
+    src: "/babies/model-newborn.jpg",
+    alt: "Newborn baby model lying in a soft white sleeper",
+    credit: "Public Domain Pictures via Pexels",
+    creditUrl: "https://www.pexels.com/photo/adorable-baby-beautiful-boy-41000/",
+    print: { left: 28, top: 62, width: 26, rotate: 14 },
+  },
+};
+
+export function getModelPhoto(product: Product): ModelPhoto {
+  return modelPhotos[product.modelPhotoId];
 }
 
 export type CollectionHandle =
@@ -150,8 +208,8 @@ const care = [
 const deliveryEstimate = "Made with love in 2–3 days · Delivered in 5–7 days";
 
 function product(
-  p: Omit<Product, "sizes" | "fabric" | "care" | "deliveryEstimate" | "images"> &
-    Partial<Pick<Product, "sizes" | "fabric" | "care" | "deliveryEstimate" | "images">>
+  p: Omit<Product, "sizes" | "fabric" | "care" | "deliveryEstimate" | "images" | "modelPhotoId"> &
+    Partial<Pick<Product, "sizes" | "fabric" | "care" | "deliveryEstimate" | "images" | "modelPhotoId">>
 ): Product {
   return {
     sizes: SIZES,
@@ -159,6 +217,7 @@ function product(
     care,
     deliveryEstimate,
     images: [],
+    modelPhotoId: "sitting",
     ...p,
   };
 }
@@ -168,6 +227,7 @@ export const products: Product[] = [
   product({
     id: "ms-01",
     handle: "one-month-old",
+    modelPhotoId: "newborn",
     title: "1 Month Old",
     collection: "milestones",
     price: 699,
@@ -182,6 +242,7 @@ export const products: Product[] = [
   product({
     id: "ms-02",
     handle: "two-months-old",
+    modelPhotoId: "lights",
     title: "2 Months Old",
     collection: "milestones",
     price: 699,
@@ -249,6 +310,7 @@ export const products: Product[] = [
   product({
     id: "ms-07",
     handle: "first-diwali",
+    modelPhotoId: "lights",
     title: "My First Diwali",
     collection: "milestones",
     price: 849,
@@ -267,6 +329,7 @@ export const products: Product[] = [
   product({
     id: "ms-08",
     handle: "first-sankranti",
+    modelPhotoId: "lights",
     title: "My First Sankranti",
     collection: "milestones",
     price: 849,
@@ -298,6 +361,7 @@ export const products: Product[] = [
   product({
     id: "ms-10",
     handle: "naming-ceremony",
+    modelPhotoId: "newborn",
     title: "Naming Ceremony Outfit",
     collection: "milestones",
     price: 899,
@@ -368,6 +432,7 @@ export const products: Product[] = [
   product({
     id: "it-01",
     handle: "hello-world-im-new-here",
+    modelPhotoId: "newborn",
     title: "Hello World, I'm New Here",
     collection: "it-baby",
     price: 749,
@@ -417,6 +482,21 @@ export const products: Product[] = [
     personalization: { babyName: true },
     colors: defaultColors,
     mockup: { shirt: "#F6D8D3", accent: "#C96F63", print: "TINY TECHIE", emoji: "🤖", bg: "#E3EDF9" },
+  }),
+  product({
+    id: "it-05",
+    handle: "alexa-order-cake",
+    title: "Alexa, Order Cake — I've Turned One",
+    collection: "it-baby",
+    price: 849,
+    shortDescription: "For the little boss whose first birthday command is cake.",
+    description:
+      "They said their first words, and it was a voice command. An adorable illustrated tee for the one-year-old who was promised cake — and expects same-day delivery.",
+    personalization: { babyName: true, date: true },
+    colors: defaultColors,
+    images: ["/products/alexa-order-cake.jpg"],
+    mockup: { shirt: "#FDFBF7", accent: "#6D9DC9", print: "ALEXA, ORDER CAKE", emoji: "🎂", bg: "#E3EDF9" },
+    bestseller: true,
   }),
 
   // ——— Chef Baby ———
