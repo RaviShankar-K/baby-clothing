@@ -60,11 +60,21 @@ export default function BabyPhotoMockup({
           width: `${p.width}%`,
           transform: `rotate(${p.rotate}deg)`,
           mixBlendMode: "multiply",
-          opacity: 0.92,
+          opacity: 0.9,
         }}
       >
         {artwork ? (
-          <img src={artwork} alt="" className="w-full rounded-[8%]" />
+          <img
+            src={artwork}
+            alt=""
+            className="w-full"
+            style={{
+              // Feather the artwork edges so the print melts into the fabric;
+              // multiply blending already hides its light background.
+              WebkitMaskImage: "radial-gradient(closest-side, black 68%, transparent 99%)",
+              maskImage: "radial-gradient(closest-side, black 68%, transparent 99%)",
+            }}
+          />
         ) : (
           <svg viewBox="0 0 100 84" className="w-full">
             <text x="50" y="24" textAnchor="middle" fontSize="20">

@@ -6,9 +6,11 @@ use without attribution (credits kept here as a courtesy and for provenance).
 
 | File | Photographer | Source |
 | --- | --- | --- |
-| `model-sitting.jpg` | Bave Pictures | https://www.pexels.com/photo/17152783/ |
+| `model-studio.jpg` | Harish Virani | https://www.pexels.com/photo/7916116/ |
 | `model-lights.jpg` | Helena Lopes | https://www.pexels.com/photo/27086930/ |
 | `model-newborn.jpg` | Public Domain Pictures | https://www.pexels.com/photo/adorable-baby-beautiful-boy-41000/ |
 
-Images were center-cropped to square. Product designs are overlaid on the
+Images were cropped to square. `model-studio.jpg` additionally had the
+garment's original print digitally removed (fabric clone-patched) so
+Tinyverse designs can be overlaid on a clean tee. Product designs are overlaid on the
 chest at render time via `modelPhotos` in `src/data/products.ts`.

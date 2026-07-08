@@ -79,7 +79,7 @@ export interface ModelPhoto {
   print: PrintPlacement;
 }
 
-export type ModelPhotoId = "sitting" | "lights" | "newborn";
+export type ModelPhotoId = "studio" | "lights" | "newborn";
 
 /**
  * Licensed stock photos of baby models (Pexels license / public domain —
@@ -88,13 +88,13 @@ export type ModelPhotoId = "sitting" | "lights" | "newborn";
  * then point products at them via `modelPhotoId`.
  */
 export const modelPhotos: Record<ModelPhotoId, ModelPhoto> = {
-  sitting: {
-    id: "sitting",
-    src: "/babies/model-sitting.jpg",
-    alt: "Smiling baby model sitting in a plain white shirt",
-    credit: "Bave Pictures via Pexels",
-    creditUrl: "https://www.pexels.com/photo/17152783/",
-    print: { left: 29, top: 55, width: 27, rotate: -3 },
+  studio: {
+    id: "studio",
+    src: "/babies/model-studio.jpg",
+    alt: "Adorable Indian baby model in a smooth white t-shirt, studio portrait",
+    credit: "Harish Virani via Pexels",
+    creditUrl: "https://www.pexels.com/photo/7916116/",
+    print: { left: 49, top: 68, width: 24, rotate: -12 },
   },
   lights: {
     id: "lights",
@@ -217,7 +217,7 @@ function product(
     care,
     deliveryEstimate,
     images: [],
-    modelPhotoId: "sitting",
+    modelPhotoId: "studio",
     ...p,
   };
 }
