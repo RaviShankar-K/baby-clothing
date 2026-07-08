@@ -186,6 +186,11 @@ export default function BabyTryOnUploader({ initialProductHandle }: { initialPro
                       🔒 Rendered on your device
                     </span>
                   )}
+                  {result.status === "generated" && (
+                    <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white/90 px-3 py-1 text-xs font-bold text-ink shadow-sm">
+                      ✨ AI preview — photo used once, never stored
+                    </span>
+                  )}
                 </>
               ) : (
                 <>

@@ -1,28 +1,24 @@
 /**
  * Baby photo try-on service.
  *
- * Default mode is fully LOCAL: the photo is analyzed and composited on the
- * user's device (see src/lib/faceComposite.ts) — it never leaves the browser.
+ * Two modes, chosen automatically:
  *
- * A remote AI plug point is kept for a future photorealistic upgrade:
- *   1. Implement the provider call inside src/app/api/try-on/route.ts
- *      (server-side, so API keys stay out of the browser — read them from
- *      process.env, never hardcode).
- *   2. Return { status: "generated", previewUrl } pointing at the image.
- *   3. Swap generateRemoteTryOnPreview into generateTryOnPreview below (or
- *      offer it as an "HD preview" option) — the UI needs no changes, it
- *      renders whatever TryOnResult comes back.
+ * 1. AI mode (GEMINI_API_KEY configured on the server): the photo is sent to
+ *    /api/try-on, which renders a photorealistic full-body image of the baby
+ *    wearing the outfit (studio catalog style). The photo is processed in
+ *    memory for that one render and never stored.
+ * 2. Local mode (no key): everything runs in the browser via
+ *    src/lib/faceComposite.ts — the photo never leaves the device. The client
+ *    checks GET /api/try-on first, so in local mode nothing is ever uploaded.
  *
- * Privacy: uploaded photos are only used to create the preview. Local mode
- * guarantees this technically — nothing is transmitted. A future remote mode
- * must process uploads transiently and never store or display them publicly.
+ * Privacy: uploaded photos are only ever used to create the preview, and are
+ * never stored or displayed publicly in either mode.
  */
 
 import type { ProductMockupSpec } from "@/data/products";
 import { compositeTryOn } from "./faceComposite";
 
 export interface TryOnRequest {
-  /** Data URL of the uploaded baby photo (never leaves the browser in local mode) */
   photoDataUrl: string;
   productHandle: string;
   productTitle: string;
@@ -36,41 +32,49 @@ export interface TryOnResult {
   message: string;
 }
 
-export async function generateTryOnPreview(request: TryOnRequest): Promise<TryOnResult> {
+let aiEnabledCache: boolean | null = null;
+
+async function isAiEnabled(): Promise<boolean> {
+  if (aiEnabledCache !== null) return aiEnabledCache;
   try {
-    const { dataUrl, faceDetected } = await compositeTryOn(request.photoDataUrl, request.productMockup);
-    return {
-      status: "local",
-      previewUrl: dataUrl,
-      message: faceDetected
-        ? "Rendered instantly on your device — your photo never left your browser."
-        : "We couldn't spot a face clearly, so we centered your photo. A bright, front-facing photo works best. Rendered on your device — nothing was uploaded.",
-    };
+    const res = await fetch("/api/try-on");
+    const data = await res.json();
+    aiEnabledCache = Boolean(data.aiEnabled);
   } catch {
-    // Very old browser (no canvas/WASM)? Fall back to the simulated remote flow.
-    return generateRemoteTryOnPreview(request);
+    aiEnabledCache = false;
   }
+  return aiEnabledCache;
 }
 
-/**
- * Remote plug point for a future AI image-generation provider.
- * Currently the API route simulates rendering and returns no image.
- * NOTE: in a real integration, send the photo itself (multipart or a
- * signed-upload URL) — the demo intentionally sends only product info.
- */
-export async function generateRemoteTryOnPreview(request: TryOnRequest): Promise<TryOnResult> {
-  const res = await fetch("/api/try-on", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      productHandle: request.productHandle,
-      productTitle: request.productTitle,
-    }),
-  });
-
-  if (!res.ok) {
-    throw new Error("Preview generation failed. Please try again.");
+export async function generateTryOnPreview(request: TryOnRequest): Promise<TryOnResult> {
+  if (await isAiEnabled()) {
+    try {
+      const res = await fetch("/api/try-on", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          photoDataUrl: request.photoDataUrl,
+          productHandle: request.productHandle,
+          productTitle: request.productTitle,
+        }),
+      });
+      if (res.ok) {
+        const result = (await res.json()) as TryOnResult;
+        if (result.status === "generated" && result.previewUrl) return result;
+      }
+      // AI failed — fall through to the local composite so the user still
+      // gets a preview rather than an error.
+    } catch {
+      // network error — fall through to local
+    }
   }
 
-  return (await res.json()) as TryOnResult;
+  const { dataUrl, faceDetected } = await compositeTryOn(request.photoDataUrl, request.productMockup);
+  return {
+    status: "local",
+    previewUrl: dataUrl,
+    message: faceDetected
+      ? "Rendered instantly on your device — your photo never left your browser."
+      : "We couldn't spot a face clearly, so we centered your photo. A bright, front-facing photo works best. Rendered on your device — nothing was uploaded.",
+  };
 }

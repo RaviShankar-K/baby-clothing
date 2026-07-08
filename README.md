@@ -115,22 +115,24 @@ The "See Your Baby Wearing This" preview runs **entirely in the browser**:
    onto a headless version of the outfit illustration on a canvas. If no face is found,
    it falls back to a centered crop with a friendly note.
 
-## How to connect a photorealistic AI try-on later
+## Photorealistic AI try-on (ready — just add a key)
 
-The local composite is playful, not photorealistic. For real AI renders, the remote plug
-point is still in place:
+For catalog-style renders (full-body photo of the baby actually wearing the outfit,
+studio backdrop), the pipeline is fully built and gated on one env var:
 
-1. **UI** (`src/components/BabyTryOnUploader.tsx`) — renders whatever `TryOnResult` comes
-   back. No changes needed.
-2. **Client service** (`src/lib/tryon.ts`) — `generateRemoteTryOnPreview()` posts to
-   `/api/try-on`. Swap it into `generateTryOnPreview()`, or offer it as an "HD preview"
-   upgrade next to the instant local one. Send the photo itself (multipart or a
-   signed-upload URL) when going live.
-3. **Server route** (`src/app/api/try-on/route.ts`) — currently simulates a 2-second render
-   and returns `{ status: "simulated", previewUrl: null }`. Replace its body with the real
-   provider call and return `{ status: "generated", previewUrl: "<image URL>" }`. This can
-   also point at self-hosted inference (e.g. CatVTON behind ComfyUI on your own GPU) if you
-   want photorealism without a third-party API.
+1. Copy `.env.example` to `.env.local` and set `GEMINI_API_KEY`
+   (from https://aistudio.google.com/apikey).
+2. Restart the dev server. The try-on page automatically switches to AI mode
+   (the client checks `GET /api/try-on` for capability, so in local mode the photo
+   is never uploaded at all).
+
+How it works: `src/app/api/try-on/route.ts` sends the baby photo + the product's
+artwork (or a description of the text design) to Gemini's image model
+(`gemini-2.5-flash-image`) with a prompt tuned for premium baby-catalog photography.
+The photo is processed in memory for the one render and never stored. If the AI call
+fails, the client falls back to the local in-browser composite so users always get a
+preview. Swap the provider by editing the `POST` handler — the same route can point at
+self-hosted inference (e.g. CatVTON behind ComfyUI) instead.
 
 Rules baked into the design:
 

@@ -33,8 +33,9 @@ export default async function TryOnPage({ searchParams }: Props) {
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-ink-soft">
           <li>Your uploaded photo is used only to create your preview and is not displayed publicly.</li>
           <li>
-            Your photo never leaves your device — face detection and the preview are rendered
-            entirely in your browser, with no uploads to any server.
+            When AI rendering is enabled, your photo is sent securely, used for that one render,
+            and never stored. Otherwise, everything runs entirely in your browser and your photo
+            never leaves your device.
           </li>
           <li>We never use your baby&apos;s photos for marketing, training, or anything else without your explicit permission.</li>
           <li>

@@ -27,9 +27,11 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl font-bold">How photo uploads work today</h2>
           <p className="mt-3 leading-relaxed text-ink-soft">
-            The &ldquo;See Your Baby Wearing This&rdquo; preview runs entirely on your device: face
-            detection and the preview image are computed in your browser, and your photo is not
-            uploaded to our servers at all. When you close the page, the photo is gone.
+            The &ldquo;See Your Baby Wearing This&rdquo; preview has two modes. When AI rendering
+            is enabled, your photo is transmitted over an encrypted connection, used once to
+            generate your preview, and never stored. When AI rendering is not enabled, face
+            detection and the preview are computed entirely in your browser and your photo is not
+            uploaded at all. In both cases, when you close the page the photo is gone.
           </p>
         </section>
 
