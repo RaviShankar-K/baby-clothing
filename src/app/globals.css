@@ -1,46 +1,196 @@
 @import "tailwindcss";
 
+/* ————————————————————————————————————————————————
+   SOUS CHEF SOCIETY — design tokens
+   A bistro for very small diners. Butter, tomato,
+   olive, and chocolate ink.
+   ———————————————————————————————————————————————— */
+
 :root {
-  --cream: #fffaf5;
-  --ink: #4a3b36;
-  --ink-soft: #8a746c;
-  --blush: #fbe9e7;
-  --coral: #e58a7e;
-  --coral-deep: #c96f63;
-  --mint: #e3f2ec;
-  --sky: #e3edf9;
-  --butter: #fdf3e3;
-  --lilac: #efe9f8;
+  --butter: #fdf4e3;
+  --butter-deep: #f5e8cd;
+  --tomato: #c8401f;
+  --tomato-deep: #a33218;
+  --olive: #5f6f3a;
+  --olive-deep: #47542b;
+  --choc: #2f2014;
+  --choc-70: rgba(47, 32, 20, 0.7);
+  --choc-45: rgba(47, 32, 20, 0.45);
+  --choc-18: rgba(47, 32, 20, 0.18);
+  --choc-08: rgba(47, 32, 20, 0.08);
+  --saffron: #e8a13a;
+  --cream-plate: #fffdf7;
 }
 
 @theme inline {
-  --color-cream: var(--cream);
-  --color-ink: var(--ink);
-  --color-ink-soft: var(--ink-soft);
-  --color-blush: var(--blush);
-  --color-coral: var(--coral);
-  --color-coral-deep: var(--coral-deep);
-  --color-mint: var(--mint);
-  --color-sky: var(--sky);
   --color-butter: var(--butter);
-  --color-lilac: var(--lilac);
-  --font-display: var(--font-quicksand), ui-rounded, system-ui, sans-serif;
-  --font-body: var(--font-nunito), system-ui, sans-serif;
+  --color-butter-deep: var(--butter-deep);
+  --color-tomato: var(--tomato);
+  --color-tomato-deep: var(--tomato-deep);
+  --color-olive: var(--olive);
+  --color-olive-deep: var(--olive-deep);
+  --color-choc: var(--choc);
+  --color-saffron: var(--saffron);
+  --color-plate: var(--cream-plate);
+  --font-display: var(--font-fraunces), "Georgia", serif;
+  --font-body: var(--font-karla), system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--cream);
-  color: var(--ink);
+  background: var(--butter);
+  color: var(--choc);
   font-family: var(--font-body);
-}
-
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--blush);
+  background: var(--tomato);
+  color: var(--butter);
+}
+
+/* ——— type ——— */
+.menu-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings: "SOFT" 60, "WONK" 1;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+}
+
+.menu-display-black {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  line-height: 0.95;
+  letter-spacing: -0.015em;
+}
+
+.menu-italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-variation-settings: "SOFT" 80, "WONK" 1;
+}
+
+.tag {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* dotted leaders for menu rows */
+.leader {
+  flex: 1;
+  margin: 0 0.6em;
+  border-bottom: 2px dotted var(--choc-45);
+  transform: translateY(-0.35em);
+}
+
+/* scalloped plate edge divider */
+.scallop {
+  height: 22px;
+  background-image: radial-gradient(circle at 12px -6px, transparent 14px, var(--butter) 15px);
+  background-size: 24px 22px;
+  background-repeat: repeat-x;
+}
+
+/* ——— keyframes ——— */
+
+@keyframes steam-rise {
+  0% { transform: translateY(0) scaleX(1); opacity: 0; }
+  15% { opacity: 0.7; }
+  60% { opacity: 0.35; }
+  100% { transform: translateY(-70px) scaleX(1.6); opacity: 0; }
+}
+
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee-x 36s linear infinite;
+  will-change: transform;
+}
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(-1.6deg); }
+  50% { transform: rotate(1.6deg); }
+}
+
+@keyframes float-y {
+  0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+  50% { transform: translateY(-13px) rotate(var(--r, 0deg)); }
+}
+
+@keyframes simmer {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-2px); }
+  75% { transform: translateY(2px); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin-slow { animation: spin-slow 26s linear infinite; }
+
+@keyframes word-in {
+  0% { transform: translateY(110%) rotate(4deg); opacity: 0; }
+  100% { transform: translateY(0) rotate(0); opacity: 1; }
+}
+
+/* reveal on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-in { opacity: 1; transform: none; }
+.reveal-late { transition-delay: 0.16s; }
+.reveal-later { transition-delay: 0.32s; }
+
+/* recipe card 3D tilt (JS sets --rx / --ry) */
+.tilt-card {
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.18s ease-out, box-shadow 0.3s ease;
+}
+.tilt-card:hover {
+  box-shadow: 0 24px 48px -18px rgba(47, 32, 20, 0.35);
+}
+.tilt-card .lift {
+  transform: translateZ(34px);
+}
+
+/* paper grain */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track, .spin-slow { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .tilt-card { transform: none !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

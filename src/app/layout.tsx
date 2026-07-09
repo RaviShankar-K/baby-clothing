@@ -1,40 +1,37 @@
 import type { Metadata } from "next";
-import { Quicksand, Nunito } from "next/font/google";
+import { Fraunces, Karla } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
-const quicksand = Quicksand({
-  variable: "--font-quicksand",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: "variable",
+  style: ["normal", "italic"],
+  axes: ["SOFT", "WONK", "opsz"],
 });
 
-const nunito = Nunito({
-  variable: "--font-nunito",
+const karla = Karla({
+  variable: "--font-karla",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
+  weight: ["400", "500", "700", "800"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Tinyverse — Little outfits for big little moments",
-    template: "%s · Tinyverse",
+    default: "Sous Chef Society — Fine Dining for Tiny Diners",
+    template: "%s · Sous Chef Society",
   },
   description:
-    "Personalized baby milestone and theme outfits made for birthdays, naming ceremonies, festivals, and everyday cuteness. Soft cotton, baby-safe prints, personalized with love.",
+    "A bistro of baby clothing: chef-baby tees, milk-sommelier onesies, and milestone tasting menus. Personalized, pre-washed, and plated with love.",
   keywords: [
-    "baby clothing",
-    "milestone outfits",
-    "personalized baby gifts",
-    "first birthday outfit",
-    "naming ceremony outfit",
-    "baby tshirts",
+    "chef baby clothing",
+    "funny baby onesies",
+    "personalized baby tees",
+    "foodie baby gifts",
   ],
   openGraph: {
-    title: "Tinyverse — Little outfits for big little moments",
-    description:
-      "Personalized baby milestone and theme outfits for birthdays, naming ceremonies, festivals, and everyday cuteness.",
+    title: "Sous Chef Society",
+    description: "Fine dining for tiny diners — a bistro of baby clothing.",
     type: "website",
   },
 };
@@ -45,12 +42,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${quicksand.variable} ${nunito.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
+    <html lang="en" className={`${fraunces.variable} ${karla.variable}`}>
+      <body className="grain min-h-screen">{children}</body>
     </html>
   );
 }
