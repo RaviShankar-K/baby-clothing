@@ -1,46 +1,188 @@
 @import "tailwindcss";
 
+/* ————————————————————————————————————————————————
+   THE TINY LABORATORY — design tokens
+   Paper, ink, and chemical-indicator accents.
+   ———————————————————————————————————————————————— */
+
 :root {
-  --cream: #fffaf5;
-  --ink: #4a3b36;
-  --ink-soft: #8a746c;
-  --blush: #fbe9e7;
-  --coral: #e58a7e;
-  --coral-deep: #c96f63;
-  --mint: #e3f2ec;
-  --sky: #e3edf9;
-  --butter: #fdf3e3;
-  --lilac: #efe9f8;
+  --paper: #f6f2e9;
+  --paper-deep: #ece6d6;
+  --ink: #16130e;
+  --ink-60: rgba(22, 19, 14, 0.6);
+  --ink-38: rgba(22, 19, 14, 0.38);
+  --ink-14: rgba(22, 19, 14, 0.14);
+  --ink-07: rgba(22, 19, 14, 0.07);
+  --litmus: #e4572e; /* methyl-orange red */
+  --petri: #0e7c6b; /* bromothymol teal   */
+  --cusof: #2b50aa; /* copper-sulfate blue */
+  --phenol: #e84a73; /* phenolphthalein pink */
+  --flame: #f2a33c; /* sodium flame amber  */
 }
 
 @theme inline {
-  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
   --color-ink: var(--ink);
-  --color-ink-soft: var(--ink-soft);
-  --color-blush: var(--blush);
-  --color-coral: var(--coral);
-  --color-coral-deep: var(--coral-deep);
-  --color-mint: var(--mint);
-  --color-sky: var(--sky);
-  --color-butter: var(--butter);
-  --color-lilac: var(--lilac);
-  --font-display: var(--font-quicksand), ui-rounded, system-ui, sans-serif;
-  --font-body: var(--font-nunito), system-ui, sans-serif;
+  --color-litmus: var(--litmus);
+  --color-petri: var(--petri);
+  --color-cusof: var(--cusof);
+  --color-phenol: var(--phenol);
+  --color-flame: var(--flame);
+  --font-display: var(--font-instrument), "Georgia", serif;
+  --font-mono: var(--font-plex-mono), "SFMono-Regular", monospace;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--cream);
+  background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-body);
-}
-
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--blush);
+  background: var(--litmus);
+  color: var(--paper);
+}
+
+/* Graph-paper field: fine grid over the whole page */
+.graph-field {
+  background-image:
+    linear-gradient(var(--ink-07) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ink-07) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* ——— type utilities ——— */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.015em;
+}
+
+.display-i {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* ——— hairline rules ——— */
+.rule-t { border-top: 1px solid var(--ink-14); }
+.rule-b { border-bottom: 1px solid var(--ink-14); }
+.rule-ink-t { border-top: 1px solid var(--ink); }
+
+/* ——— keyframes ——— */
+
+@keyframes ticker-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.ticker-track {
+  animation: ticker-x 42s linear infinite;
+  will-change: transform;
+}
+.ticker:hover .ticker-track { animation-play-state: paused; }
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes bubble-rise {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(-46px); opacity: 0; }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes dash-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes blink-caret {
+  0%, 55% { opacity: 1; }
+  56%, 100% { opacity: 0; }
+}
+.caret { animation: blink-caret 1.1s step-end infinite; }
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin-slow { animation: spin-slow 22s linear infinite; }
+
+/* Subtle paper grain over everything */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+}
+
+/* reveal-on-scroll base states (driven by IntersectionObserver) */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+.reveal-late { transition-delay: 0.18s; }
+.reveal-later { transition-delay: 0.34s; }
+
+/* element tile flip */
+.tile {
+  perspective: 1100px;
+}
+.tile-inner {
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.34, 1.2, 0.4, 1);
+}
+.tile:hover .tile-inner,
+.tile:focus-within .tile-inner {
+  transform: rotateY(180deg);
+}
+.tile-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.tile-back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
