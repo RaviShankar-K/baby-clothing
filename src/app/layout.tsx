@@ -1,40 +1,41 @@
 import type { Metadata } from "next";
-import { Quicksand, Nunito } from "next/font/google";
+import { Fredoka, Caveat, Figtree } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 
-const quicksand = Quicksand({
-  variable: "--font-quicksand",
+const fredoka = Fredoka({
+  variable: "--font-fredoka",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["400", "500", "600"],
 });
 
-const nunito = Nunito({
-  variable: "--font-nunito",
+const caveat = Caveat({
+  variable: "--font-caveat",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
+  weight: ["600", "700"],
+});
+
+const figtree = Figtree({
+  variable: "--font-figtree",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Tinyverse — Little outfits for big little moments",
-    template: "%s · Tinyverse",
+    default: "Once Upon a Onesie — a picture book you can wear",
+    template: "%s · Once Upon a Onesie",
   },
   description:
-    "Personalized baby milestone and theme outfits made for birthdays, naming ceremonies, festivals, and everyday cuteness. Soft cotton, baby-safe prints, personalized with love.",
+    "Storybook milestone tees for tiny heroes: hand-illustrated chapters from six months to the big number one, printed on impossibly soft cotton.",
   keywords: [
-    "baby clothing",
-    "milestone outfits",
-    "personalized baby gifts",
-    "first birthday outfit",
-    "naming ceremony outfit",
-    "baby tshirts",
+    "baby milestone tees",
+    "first birthday shirt",
+    "illustrated baby clothing",
+    "storybook baby gifts",
   ],
   openGraph: {
-    title: "Tinyverse — Little outfits for big little moments",
-    description:
-      "Personalized baby milestone and theme outfits for birthdays, naming ceremonies, festivals, and everyday cuteness.",
+    title: "Once Upon a Onesie",
+    description: "A picture book you can wear — storybook milestone tees for tiny heroes.",
     type: "website",
   },
 };
@@ -45,12 +46,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${quicksand.variable} ${nunito.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
+    <html lang="en" className={`${fredoka.variable} ${caveat.variable} ${figtree.variable}`}>
+      <body className="min-h-screen">{children}</body>
     </html>
   );
 }
